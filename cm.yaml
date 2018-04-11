@@ -1,0 +1,33 @@
+apiVersion: v1
+data:
+  config.toml: |
+    concurrent = 10
+    check_interval = 1
+  entrypoint: |
+    #!/bin/bash
+
+    set -xe
+    cp /scripts/config.toml /etc/gitlab-runner/
+
+
+    # Register the runner
+    /entrypoint register --non-interactive \
+      --executor kubernetes \
+      --tls-ca-file /etc/gitlab-runner/certs/tls.crt
+    sed -i '6i\ \ tls-key-file = "/etc/gitlab-runner/certs/tls.key"' /etc/gitlab-runner/config.toml
+    sed -i '7i\ \ tls-cert-file = "/etc/gitlab-runner/certs/tls.crt"' /etc/gitlab-runner/config.toml
+    sed -i '8i\ \ pre_clone_script = """echo "10.108.62.145   gitlab.gitlab" >> /etc/hosts; echo "10.108.62.145   registry.gitlab" >> /etc/hosts; git config --global http.sslverify false; mkdir /etc/docker; echo "{\n  /\"insecure-registries/\" : [/\"registry.gitlab/\"]\n}" >> /etc/docker/daemon.json; export DOCKER_TLS_VERIFY=0;"""' /etc/gitlab-runner/config.toml
+    #Start the runner
+    /entrypoint run --user=gitlab-runner \
+      --working-directory=/home/gitlab-runner
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"config.toml":"concurrent = 10\ncheck_interval = 1\n","entrypoint":"#!/bin/bash\n\nset -xe\ncp /scripts/config.toml /etc/gitlab-runner/\n\n\n# Register the runner\n/entrypoint register --non-interactive \\\n  --executor kubernetes \\\n  --tls-ca-file /etc/gitlab-runner/certs/tls.crt\nsed -i '6i\\ \\ tls-key-file = \"/etc/gitlab-runner/certs/tls.key\"' /etc/gitlab-runner/config.toml\nsed -i '7i\\ \\ tls-cert-file = \"/etc/gitlab-runner/certs/tls.crt\"' /etc/gitlab-runner/config.toml\nsed -i '8i\\ \\ pre_clone_script = \"\"\"echo \"10.108.74.87    gitlab.gitlab\" \u003e\u003e /etc/hosts; echo \"10.108.74.87    registry.gitlab\" \u003e\u003e /etc/hosts; git config --global http.sslverify false; mkdir /etc/docker; echo \"{\\n  /\\\"insecure-registries/\\\" : [/\\\"registry.gitlab/\\\"]\\n}\" \u003e\u003e ~/etc/docker/daemon.json; export DOCKER_TLS_VERIFY=0;\"\"\"' /etc/gitlab-runner/config.toml\n#echo \"  [runners.docker]\" \u003e\u003e /etc/gitlab-runner/config.toml\n#echo '    volumes = [\"/cache\", \"/etc/gitlab-runner/certs/tls.crt:/etc/ssl/certs/ca.crt\"]' \u003e\u003e /etc/gitlab-runner/config.toml\n#echo '    pre_clone_script = \"git config --global http.sslCAInfo /etc/ssl/certs/ca.crt\"' \u003e\u003e /etc/gitlab-runner/config.toml\n#echo '    pre_clone_script = \"git config --global http.sslverify \\\"false\\\"\"' \u003e\u003e /etc/gitlab-runner/config.toml\n#Start the runner\n/entrypoint run --user=gitlab-runner \\\n  --working-directory=/home/gitlab-runner\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2018-03-23T10:19:17Z","labels":{"app":"gitlab-gitlab-runner","chart":"gitlab-runner-0.1.13","heritage":"Tiller","release":"gitlab"},"name":"gitlab-gitlab-runner","namespace":"default","resourceVersion":"1288754","selfLink":"/api/v1/namespaces/default/configmaps/gitlab-gitlab-runner","uid":"a4ce8ebc-2e83-11e8-835c-025000000001"}}
+  labels:
+    app: gitlab-gitlab-runner
+    heritage: Tiller
+    release: gitlab
+  name: gitlab-gitlab-runner
+  namespace: default
