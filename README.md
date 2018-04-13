@@ -17,7 +17,9 @@ kubectl apply -f PV.yaml
 kubectl get svc
 
 kubectl apply -f cm.yaml
+
 kubectl get pods -l app=gitlab-gitlab-runner
+
 kubectl delete pod -l app=gitlab-gitlab-runner
 
 ## Check the gitlab pipeline
