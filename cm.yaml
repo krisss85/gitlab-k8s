@@ -16,7 +16,7 @@ data:
       --tls-ca-file /etc/gitlab-runner/certs/tls.crt
     sed -i '6i\ \ tls-key-file = "/etc/gitlab-runner/certs/tls.key"' /etc/gitlab-runner/config.toml
     sed -i '7i\ \ tls-cert-file = "/etc/gitlab-runner/certs/tls.crt"' /etc/gitlab-runner/config.toml
-    sed -i '8i\ \ pre_clone_script = """echo "10.108.62.145   gitlab.gitlab" >> /etc/hosts; echo "10.108.62.145   registry.gitlab" >> /etc/hosts; git config --global http.sslverify false; mkdir /etc/docker; echo "{\n  /\"insecure-registries/\" : [/\"registry.gitlab/\"]\n}" >> /etc/docker/daemon.json; export DOCKER_TLS_VERIFY=0;"""' /etc/gitlab-runner/config.toml
+    sed -i '8i\ \ pre_clone_script = """echo "10.99.252.202   gitlab.gitlab" >> /etc/hosts; echo "10.99.252.202   registry.gitlab" >> /etc/hosts; git config --global http.sslverify false; mkdir /etc/docker; echo "{\n  /\"insecure-registries/\" : [/\"registry.gitlab/\"]\n}" >> /etc/docker/daemon.json; export DOCKER_TLS_VERIFY=0;"""' /etc/gitlab-runner/config.toml
     #Start the runner
     /entrypoint run --user=gitlab-runner \
       --working-directory=/home/gitlab-runner
